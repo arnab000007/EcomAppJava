@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,4 +23,7 @@ public class AuthUser extends BaseModel{
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "User", fetch = FetchType.LAZY)
+    private List<Address> addresses = new ArrayList<>();
 }

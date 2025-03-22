@@ -28,13 +28,14 @@ public class OrderService implements IOrderService{
     private IPaymentService paymentService;
 
     @Override
-    public Pair<EcomOrder, String> createOrder(Cart cart, AuthUser user) {
+    public Pair<EcomOrder, String> createOrder(Cart cart, AuthUser user, Address address) {
 
         EcomOrder order = new EcomOrder();
         order.setUser(user);
         order.setOrderStatus(OrderStatus.CREATED);
         Double total = 0.0;
         order.setState(State.ACTIVE);
+        order.setAddress(address);
 
         for(CartItem cartItem : cart.getCartItems()) {
             if(cartItem.getQuantity() > cartItem.getProduct().getStock()){

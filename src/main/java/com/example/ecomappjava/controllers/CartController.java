@@ -3,6 +3,7 @@ package com.example.ecomappjava.controllers;
 import com.example.ecomappjava.dtoconverter.CartDtoConverter;
 import com.example.ecomappjava.dtos.cart.AddItemToCartRequestDto;
 import com.example.ecomappjava.dtos.cart.CheckOutResponseDto;
+import com.example.ecomappjava.dtos.cart.CheckoutRequestDto;
 import com.example.ecomappjava.dtos.cart.GetCartResponseDto;
 import com.example.ecomappjava.exceptions.auth.UserDoesnotExistException;
 import com.example.ecomappjava.exceptions.cart.CartNotAvailableException;
@@ -122,14 +123,14 @@ public class CartController {
 
     @PostMapping("/checkout")
     @RoleRequired(value = "NORMAL_USER", checkUser = true)
-    public CheckOutResponseDto checkout(HttpServletRequest request){
+    public CheckOutResponseDto checkout(@RequestBody CheckoutRequestDto requestDto, HttpServletRequest request){
         try {
             AuthUser currentUser = (AuthUser) request.getAttribute("currentUser");
             if (currentUser == null) {
                 throw new UserDoesnotExistException("User not found in request");
             }
 
-            Pair<EcomOrder, String> orderInfo = cartService.checkout(currentUser.getId());
+            Pair<EcomOrder, String> orderInfo = cartService.checkout(currentUser.getId(), requestDto.getAddressId());
             CheckOutResponseDto response = CartDtoConverter.from(orderInfo.a);
             response.setPaymentLink(orderInfo.b);
             return response;

@@ -22,6 +22,10 @@ public class EcomOrder extends BaseModel{
 
     private OrderStatus orderStatus;
 
+    @OneToOne
+    private Address address;
+
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems =  new ArrayList<>();
 

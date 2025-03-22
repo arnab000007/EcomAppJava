@@ -3,6 +3,7 @@ package com.example.ecomappjava.services.cart;
 import com.example.ecomappjava.Reporsitory.CartItemRepository;
 import com.example.ecomappjava.Reporsitory.CartRepository;
 import com.example.ecomappjava.exceptions.auth.UserDoesnotExistException;
+import com.example.ecomappjava.exceptions.cart.AddressNotFoundException;
 import com.example.ecomappjava.exceptions.cart.CartNotAvailableException;
 import com.example.ecomappjava.exceptions.cart.ProductNotAvailableException;
 import com.example.ecomappjava.exceptions.product.ProductNotFoundException;
@@ -124,13 +125,22 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public Pair<EcomOrder, String> checkout(Long userId) {
-        AuthUser user = getUser(userId);
+    public Pair<EcomOrder, String> checkout(Long userId, Long addressId) {
+        AuthUser user = getUserWithAddress(userId);
+        Address address = user.getAddresses().stream().filter(a -> {
+            return a.getId().equals(addressId);
+        }).findFirst().orElse(null);
+
+        if(address == null) {
+            throw new AddressNotFoundException("Address not found under the current user");
+        }
 
         Cart cart = cartRepository.findCartByUser_Id(userId)
                 .orElseThrow(() ->new CartNotAvailableException("Cart not found"));
 
-        Pair<EcomOrder, String> orderInfo = orderService.createOrder(cart, user);
+
+
+        Pair<EcomOrder, String> orderInfo = orderService.createOrder(cart, user, address);
 
         this.clearCart(userId);
 
@@ -147,6 +157,15 @@ public class CartService implements ICartService {
 
     private AuthUser getUser(Long userId) {
         AuthUser user = authService.getUserByid(userId);
+
+        if (user == null) {
+            throw new UserDoesnotExistException("User not found");
+        }
+        return user;
+    }
+
+    private AuthUser getUserWithAddress(Long userId) {
+        AuthUser user = authService.getUserByidWithAddress(userId);
 
         if (user == null) {
             throw new UserDoesnotExistException("User not found");

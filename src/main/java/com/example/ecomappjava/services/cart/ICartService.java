@@ -8,6 +8,6 @@ public interface ICartService {
     Cart addToCart(Long productId, Long userId, int quantity);
     Cart removeFromCart(Long productId, Long userId, int quantity);
     Boolean clearCart(Long userId);
-    Pair<EcomOrder, String> checkout(Long userId);
+    Pair<EcomOrder, String> checkout(Long userId, Long addressId);
     Cart getCart(Long userId);
 }
