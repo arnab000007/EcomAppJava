@@ -109,13 +109,13 @@ public class AuthService implements IAuthService{
 
     @Override
     public AuthUser getUserByid(Long id) {
-        AuthUser user = userReporsitory.findById(id).orElse(null);
+        AuthUser user = userReporsitory.findByIdAndState(id, State.ACTIVE).orElse(null);
         return user;
     }
 
     @Override
     public AuthUser getUserByidWithAddress(Long id) {
-        AuthUser user = userReporsitory.findById(id).orElse(null);
+        AuthUser user = userReporsitory.findByIdAndState(id, State.ACTIVE).orElse(null);
         if (user != null) {
             Hibernate.initialize(user.getAddresses());
         }

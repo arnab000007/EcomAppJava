@@ -128,7 +128,7 @@ public class CartService implements ICartService {
     public Pair<EcomOrder, String> checkout(Long userId, Long addressId) {
         AuthUser user = getUserWithAddress(userId);
         Address address = user.getAddresses().stream().filter(a -> {
-            return a.getId().equals(addressId);
+            return a.getId().equals(addressId) && a.getState().equals(State.ACTIVE);
         }).findFirst().orElse(null);
 
         if(address == null) {
